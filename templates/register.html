@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Register</h1>
+<form method="POST" enctype="multipart/form-data" id="registration-form">
+    {{ form.hidden_tag() }}
+    {{ form.name.label }} {{ form.name(size=32) }} <br>
+    {{ form.email.label }} {{ form.email(size=32) }} <br>
+    {{ form.password.label }} {{ form.password(size=32) }} <br>
+    {{ form.confirm_password.label }} {{ form.confirm_password(size=32) }} <br>
+
+    <video id="video" width="320" height="240" autoplay></video>
+    <button type="button" id="snap">Capture</button>
+    <canvas id="canvas" width="320" height="240"></canvas>
+    <input type="hidden" name="image" id="imageData">
+    <br>
+    {{ form.submit() }}
+</form>
+
+<script>
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const imageDataInput = document.getElementById('imageData');
+    const snapButton = document.getElementById('snap');
+
+    // Get access to the camera
+    navigator.mediaDevices.getUserMedia({ video: true })
+        .then(stream => {
+            video.srcObject = stream;
+        })
+        .catch(err => {
+            console.error("Error accessing camera: " + err);
+        });
+
+    // Capture the image
+    snapButton.addEventListener('click', function() {
+        const context = canvas.getContext('2d');
+        context.drawImage(video, 0, 0, 320, 240);
+        imageDataInput.value = canvas.toDataURL('image/png'); // Save image data in the hidden input
+    });
+</script>
+{% endblock %}
